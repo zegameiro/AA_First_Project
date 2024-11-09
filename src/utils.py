@@ -11,8 +11,6 @@ def calculate_cost(conj_a, conj_b, connections):
     for node_1, node_2 in connections:
         # Look for edges that belong to both of the subconjunctions
         if (node_1 in conj_a and node_2 in conj_b) or (node_1 in conj_b and node_2 in conj_a):
-            print(f"Connections {connections}\n")
-            print(f"Node1 {node_1}, Node2 {node_2}")
             cost += connections[(node_1, node_2)]
 
     return cost

@@ -2,7 +2,7 @@ from getopt import GetoptError, getopt
 
 from constants import STUDENT_NUMBER, EDGES_PERCENTAGE
 from greedy_solution import GreedySolution
-from src.exhaustive_search import ExhaustiveSearch
+from exhaustive_search import ExhaustiveSearch
 
 import sys
 import random
