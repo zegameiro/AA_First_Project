@@ -10,10 +10,7 @@ class Graph:
         self.nodes_number = nodes
         self.edges_number = edges
 
-        self.node_positions = self.build_node_positions(self.nodes_number)
-        # Example:
-        # {'a': (1, 1), 'b': (10, 20), 'c': (15, 5),...}
-
+        self.node_positions = self.build_nodes(self.nodes_number)
         self.edge_positions = self.build_edges(self.edges_number)
 
         self.adjency_matrix = defaultdict(list)
@@ -21,13 +18,20 @@ class Graph:
         self.nx_graph = nx.Graph()
 
 
-    def build_node_positions(self, n_nodes) -> dict:
+    def build_nodes(self, n_nodes) -> dict:
         """Generate random positions for each node, using ASCII codes for letters 'a' to 'z'"""
         index = 97 # ASCII code for the letter a
         node_positions = {}
 
         for i in range(n_nodes):
-            node_positions[chr(index + i)] = (random.randint(1, 20), random.randint(1, 20))
+
+            position = (random.randint(1, 20), random.randint(1, 20))
+
+            # Check if the position is already taken by another node
+            while position in node_positions.values():
+                position = (random.randint(1, 20), random.randint(1, 20))
+
+            node_positions[chr(index + i)] = position
 
         return node_positions
     
@@ -105,23 +109,28 @@ class Graph:
 
         return self.adjency_matrix
     
-    def draw_graph(self, counter) -> None:
-
-        print(f"Edge Positions: {self.edge_positions}")
+    def draw_graph(self, counter, removed_edges=None) -> None:
 
         for node1, node2 in self.edge_positions.keys():
-            self.nx_graph.add_edge(node1, node2, weigh=self.edge_positions[(node1, node2)])
+            if (node1, node2) in removed_edges or (node2, node1) in removed_edges:
+                self.nx_graph.add_edge(node1, node2, weight=self.edge_positions[(node1, node2)], color='red')
+            else:
+                self.nx_graph.add_edge(node1, node2, weight=self.edge_positions[(node1, node2)], color='black')
 
         for node in self.node_positions.keys():
             self.nx_graph.add_node(node, pos=self.node_positions[node])
 
         edge_labels = nx.get_edge_attributes(self.nx_graph, "weight")
         pos = nx.get_node_attributes(self.nx_graph, "pos")
-        nx.draw_networkx_edge_labels(self.nx_graph, pos=pos, edge_labels=edge_labels)
+        nx.draw_networkx_edge_labels(self.nx_graph, pos, edge_labels)
+
+        # Get edge colors from attributes
+        edge_colors = [self.nx_graph[u][v]['color'] for u, v in self.nx_graph.edges()]
 
         nx.draw(
-            G=self.nx_graph,
-            pos=pos,
+            self.nx_graph,
+            pos,
+            edge_color=edge_colors,
             with_labels=True
         )
 

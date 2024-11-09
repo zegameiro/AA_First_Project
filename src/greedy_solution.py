@@ -9,17 +9,12 @@ class GreedySolution:
         self.counter = counter
         self.graph = Graph(nodes=nodes, edges=edges)
 
-        # Draw the graph
-        self.graph.draw_graph(counter=counter)
-
         # Build the adjency matrix
         self.adjency_matrix = self.graph.build_adjency_matrix()
         self.adjency_matrix = sorted(self.adjency_matrix, key=lambda x: len(x[1]))
 
         self.min_edges = len(self.adjency_matrix[0][1])
-
-        # All possible combinations for a cut
-        self.combinations = None
+        
 
     def solve_problem(self):
 
@@ -29,6 +24,8 @@ class GreedySolution:
         best_sub_set_b=""
         counter=0
 
+        removed_edges = []
+
         for i in self.adjency_matrix:
 
             if len(i[1]) == self.min_edges:
@@ -37,6 +34,7 @@ class GreedySolution:
 
                 counter += 1
                 connected_nodes = i[1]
+                self.adjency_matrix.remove(i)
                 self.combinations = get_all_cut_combinations(nodes=(list(connected_nodes) + list(i[0])))
 
                 for sub_set_a in self.combinations:
@@ -49,7 +47,10 @@ class GreedySolution:
                         min_cost = x
                         best_sub_set_a = sub_set_a
                         best_sub_set_b = sub_set_b
+                        removed_edges = [(u, v) for u, v in self.graph.edge_positions.keys() if (u in sub_set_a and v in sub_set_b) or (u in sub_set_b and v in sub_set_a)]
                     elif x == min_cost:
                         n_solutions += 1
 
-        return best_sub_set_a, best_sub_set_a, best_sub_set_b, counter, n_solutions
+        self.graph.draw_graph(counter=self.counter, removed_edges=removed_edges)
+
+        return min_cost, best_sub_set_a, best_sub_set_b, counter, n_solutions
