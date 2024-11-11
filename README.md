@@ -52,13 +52,13 @@ pip install -r requirements.txt
 cd src/
 ```
 
-4. Run the __main.py__ file with the following options:
+5. Run the __main.py__ file with the following options:
 
 ```bash
 python3 main.py -m <greedy/exhaustive> -n <max number of nodes>
 ```
 
-The argument ```-n``` isn't required so if not passed the default value will be 16 now the -m is required.
+__NOTE:__ The argument ```-n``` isn't required so if not passed the default value will be 16 now the -m is required.
 
 ### Authors
 
